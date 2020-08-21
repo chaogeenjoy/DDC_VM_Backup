@@ -12,7 +12,7 @@ public class VMGenerator {
 		ArrayList<VirtualMachine> vms = new ArrayList<VirtualMachine>();
 		for (int i = 0; i < vmNum; i++) {
 			VirtualMachine vm = new VirtualMachine("VM" + i, i, null, Parameter.cpuDemand(r), Parameter.memoryDemand(r),
-					Parameter.stoDemand(r), Parameter.reliRequire(r));
+					Parameter.stoDemand(r), Parameter.vMReliability(r));
 			vms.add(vm);
 		}
 

@@ -37,18 +37,19 @@ public class DDC {
 	public void createDDC() {
 		Random r = new Random(1000);
 		for (int i = 0; i < Parameter.SERVER_NUM; i++) {
-			Computing c = new Computing("CPU" + i, i, null, Parameter.CPU_PER_SERVER,
-					Parameter.RELI_MODULE[r.nextInt(Parameter.RELI_MODULE.length)]);
+			Computing c = new Computing("CPU" + i, i, null, Parameter.CPU_PER_SERVER, Parameter.moduleReliability(r));
 			this.getCPUs().put(c.getName(), c);
 
-			Memory m = new Memory("Memory" + i, i, null, Parameter.MEMORY_PER_SERVER,
-					Parameter.RELI_MODULE[r.nextInt(Parameter.RELI_MODULE.length)]);
+			Memory m = new Memory("Memory" + i, i, null, Parameter.MEMORY_PER_SERVER, Parameter.moduleReliability(r));
 			this.getMemorys().put(m.getName(), m);
 
 			Storage s = new Storage("Storage" + i, i, null, Parameter.STORAGE_PER_SERVER,
-					Parameter.RELI_MODULE[r.nextInt(Parameter.RELI_MODULE.length)]);
+					Parameter.moduleReliability(r));
 			this.getStorages().put(s.getName(), s);
 		}
 	}
-
+	
+	public void createServers() {
+		
+	}
 }
