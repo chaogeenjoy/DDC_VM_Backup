@@ -16,7 +16,7 @@ import request.VirtualMachine;
 import tdc.Server;
 import tdc.TDC;
 
-public class AmplWriter {
+public class Ampl_Combination {
 	public static void main(String[] args) throws IOException {
 		DDC ddc = new DDC();
 		ddc.createDDC();
@@ -24,7 +24,7 @@ public class AmplWriter {
 		TDC tdc = new TDC();
 		tdc.convertingDDCToTDC(ddc);
 
-		int vmNum = 60;
+		int vmNum = 40;
 		VMGenerator g = new VMGenerator();
 		ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum);
 
