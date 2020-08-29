@@ -8,7 +8,7 @@ import general.CommonObject;
 public class Server extends CommonObject {
 	private Computing cpu;
 	private Memory memory;
-	private Storage storage;
+	private Storage disk;
 	private double reliaiblity;
 	
 	public Server(String name, int index, String comments) {
@@ -31,13 +31,12 @@ public class Server extends CommonObject {
 	public void setMemory(Memory memory) {
 		this.memory = memory;
 	}
-
-	public Storage getStorage() {
-		return storage;
+	public Storage getDisk() {
+		return disk;
 	}
 
-	public void setStorage(Storage storage) {
-		this.storage = storage;
+	public void setDisk(Storage disk) {
+		this.disk = disk;
 	}
 
 	public double getReliaiblity() {

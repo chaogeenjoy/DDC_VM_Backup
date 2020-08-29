@@ -33,9 +33,9 @@ public class TDC {
 			this.getServers().put(s.getName(),s);
 			s.setCpu(cpus.get(i));
 			s.setMemory(memorys.get(i));
-			s.setStorage(storages.get(i));
+			s.setDisk(storages.get(i));
 			s.setReliaiblity(
-					s.getCpu().getReliability() * s.getMemory().getReliability() * s.getStorage().getReliability());
+					s.getCpu().getReliability() * s.getMemory().getReliability() * s.getDisk().getReliability());
 		}
 
 	}

@@ -7,7 +7,14 @@ import general.Parameter;
 
 public class VMGenerator {
 
-	public ArrayList<VirtualMachine> generatingVMs(int vmNum) {
+	/**
+	 * 
+	 * @param vmNum
+	 * @param lower
+	 * @param upper
+	 * @return VM reliability is within (lower, upper)
+	 */
+	public ArrayList<VirtualMachine> generatingVMs(int vmNum, double lower, double upper) {
 		Random p = new Random(123);
 		Random r = new Random(132);
 
@@ -24,7 +31,7 @@ public class VMGenerator {
 
 			VirtualMachine vm = new VirtualMachine("VM" + i, i, null, Parameter.cpuDemand(r, cpuIntensive),
 					Parameter.memoryDemand(r, memoryIntensive), Parameter.stoDemand(r, diskIntensive),
-					Parameter.vMReliability(r));
+					Parameter.vMReliability(r, lower,upper));
 			vms.add(vm);
 		}
 

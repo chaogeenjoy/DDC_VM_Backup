@@ -24,12 +24,16 @@ public class AmplWriter {
 		TDC tdc = new TDC();
 		tdc.convertingDDCToTDC(ddc);
 
-		int vmNum = 60;
+		int vmNum = 50;
+		double[][] rel= {{0.7,0.8},{0.8,0.9}, {0.9,0.99}	
+		};
+		double lower = 0.999;
+		double upper=lower;
 		VMGenerator g = new VMGenerator();
-		ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum);
+		ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum, lower,  upper);
 
 		String folderName = "D:\\softspace\\ampl\\";
-		String varName = "" + vmNum;
+		String varName = "" + upper;
 		generateDataFile_DDC(ddc, folderName, varName, vms);
 		generateDataFile_TDC(tdc, ddc, folderName, varName, vms);
 		System.out.println("Finish");
@@ -41,24 +45,7 @@ public class AmplWriter {
 		BufferedWriter file = new BufferedWriter(new FileWriter(f));
 
 		// Resource types
-		file.write("set R := Computing, Memory, Storage;\r\n");
-		file.flush();
-
-		// Module
-		file.write("set M[Computing] :=");
-		for (Computing c : ddc.getCPUs().values())
-			file.write(c.getName() + " ");
-		file.write(" ;\r\n");
-
-		file.write("set M[Memory] :=");
-		for (Memory m : ddc.getMemorys().values())
-			file.write(m.getName() + " ");
-		file.write(" ;\r\n");
-
-		file.write("set M[Storage] :=");
-		for (Storage s : ddc.getStorages().values())
-			file.write(s.getName() + " ");
-		file.write(" ;\r\n");
+		file.write("set R := CPU, Memory, Disk;\r\n");
 		file.flush();
 
 		// set of servers
@@ -76,44 +63,29 @@ public class AmplWriter {
 		file.write(" ;\r\n");
 		file.flush();
 
-		// Beta
-		file.write("param Beta :=\r\n");
-		for (Server s : tdc.getServers().values()) {
-			file.write(s.getName() + ",Computing," + s.getCpu().getName() + " 1\r\n");
-			file.write(s.getName() + ",Memory," + s.getMemory().getName() + " 1\r\n");
-			file.write(s.getName() + ",Storage," + s.getStorage().getName() + " 1\r\n");
-		}
-		file.write(" ;\r\n");
-		file.flush();
-
 		// available capacity
 		file.write("param C :=\r\n");
-		for (Computing m : ddc.getCPUs().values())
-			file.write("Computing," + m.getName() + " " + m.getCapacity() + "\r\n");
-		for (Memory m : ddc.getMemorys().values())
-			file.write("Memory," + m.getName() + " " + m.getCapacity() + "\r\n");
-		for (Storage m : ddc.getStorages().values())
-			file.write("Storage," + m.getName() + " " + m.getCapacity() + "\r\n");
+		for (Server s : tdc.getServers().values()) {
+			file.write(s.getName() + ",CPU " + s.getCpu().getCapacity() + "\r\n");
+			file.write(s.getName() + ",Memory "+s.getMemory().getCapacity() + "\r\n");
+			file.write(s.getName() + ",Disk " + s.getDisk().getCapacity() + "\r\n");
+		}
 		file.write(";\r\n");
 		file.flush();
 
 		// Reliability
 		file.write("param Reli :=\r\n");
-		for (Computing m : ddc.getCPUs().values())
-			file.write("Computing," + m.getName() + " " + m.getReliability() + "\r\n");
-		for (Memory m : ddc.getMemorys().values())
-			file.write("Memory," + m.getName() + " " + m.getReliability() + "\r\n");
-		for (Storage m : ddc.getStorages().values())
-			file.write("Storage," + m.getName() + " " + m.getReliability() + "\r\n");
+		for (Server s : tdc.getServers().values())
+			file.write(s.getName() + " "+s.getReliaiblity()+"\r\n");
 		file.write(";\r\n");
 		file.flush();
 
 		// resource demand
 		file.write("param D :=\r\n");
 		for (VirtualMachine vm : vms) {
-			file.write(vm.getName() + ",Computing " + vm.getCpuDemand() + "\r\n");
+			file.write(vm.getName() + ",CPU " + vm.getCpuDemand() + "\r\n");
 			file.write(vm.getName() + ",Memory " + vm.getMemDemand() + "\r\n");
-			file.write(vm.getName() + ",Storage " + vm.getStoDemand() + "\r\n");
+			file.write(vm.getName() + ",Disk " + vm.getStoDemand() + "\r\n");
 		}
 		file.write(";\r\n");
 		file.flush();
@@ -133,9 +105,10 @@ public class AmplWriter {
 		bw1.write("option auxfiles c;\r\noption solver gurobi;\r\n");
 		bw1.write("option gurobi_options 'mipgap = " + Parameter.GROUBI_MIPGAP
 				+ " outlev = 1 nodefilestart = 0.1';\r\nsolve;\r\n");
+		bw1.write("display sum{v in V} sigma[v];\r\n");
 		bw1.write("display sum{v in V} chi[v];\r\n");
 		bw1.write(
-				"display {v in V} sum{s in S, t in S} phi[v,s,t] * (1-(1-prod{r in R} (sum{m in M[r]} Beta[s,r,m]*Reli[r,m]))*(1-prod{r in R} (sum{m in M[r]} Beta[t,r,m]*Reli[r,m])))"
+				"#display {v in V} sum{s in S, t in S} phi[v,s,t] * (1-(1-prod{r in R} (sum{m in M[r]} Beta[s,r,m]*Reli[r,m]))*(1-prod{r in R} (sum{m in M[r]} Beta[t,r,m]*Reli[r,m])))"
 						+ "+ sum{s in S} vphi[v,s] * prod{r in R}(sum{m in M[r]} Beta[s,r,m]*Reli[r,m]) >> Reli_Tdc"+varName+".txt;\r\n");
 		bw1.close();
 	}
@@ -221,12 +194,13 @@ public class AmplWriter {
 		bw1.write("option auxfiles c;\r\noption solver gurobi;\r\n");
 		bw1.write("option gurobi_options 'mipgap = " + Parameter.GROUBI_MIPGAP
 				+ " outlev = 1 nodefilestart = 0.1';\r\nsolve;\r\n");
+		bw1.write("display sum{v in V} sigma[v];\r\n");
 		bw1.write("display sum{v in V} chi[v];\r\n");
-		bw1.write("display {v in V} "
+		bw1.write("#display {v in V} "
 				+ "chi[v] * prod{r in R} (1- sum{m in M[r],n in M[r]} delta[v,r,m]*gamma[v,r,n]*(1-Reli[r,m])*(1-Reli[r,n])) "
 				+ "+prod{r in R} (sum{m in M[r]} delta[v,r,m]*(1-chi[v])*Reli[r,m])>>Reli_ddc"+varName+".txt;\r\n");
 		bw1.write(
-				"display {v in V} exp(sum{r in R, m in M[r], n in M[r]} mu[v,r,m,n] * log(1-(1-Reli[r,m])*(1-Reli[r,n]))"
+				"#display {v in V} exp(sum{r in R, m in M[r], n in M[r]} mu[v,r,m,n] * log(1-(1-Reli[r,m])*(1-Reli[r,n]))"
 						+ "+ sum{r in R, m in M[r]} xi[v,r,m] * log(Reli[r,m]));\r\n");
 		bw1.close();
 

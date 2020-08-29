@@ -25,9 +25,11 @@ public class Ampl_Combination {
 		tdc.convertingDDCToTDC(ddc);
 
 		int vmNum = 40;
+		double lower = 0.9;
+		double upper=lower;
 		VMGenerator g = new VMGenerator();
-		ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum);
-
+		ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum, lower,  upper);
+		
 		String folderName = "D:\\softspace\\ampl\\";
 		String varName = "" + vmNum;
 		generateDataFile_DDC(ddc, folderName, varName, vms);
@@ -81,7 +83,7 @@ public class Ampl_Combination {
 		for (Server s : tdc.getServers().values()) {
 			file.write(s.getName() + ",Computing," + s.getCpu().getName() + " 1\r\n");
 			file.write(s.getName() + ",Memory," + s.getMemory().getName() + " 1\r\n");
-			file.write(s.getName() + ",Storage," + s.getStorage().getName() + " 1\r\n");
+			file.write(s.getName() + ",Storage," + s.getDisk().getName() + " 1\r\n");
 		}
 		file.write(" ;\r\n");
 		file.flush();
