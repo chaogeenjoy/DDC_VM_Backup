@@ -2,6 +2,10 @@ package general;
 
 import java.util.Random;
 
+import ddc.Computing;
+import ddc.Disk;
+import ddc.Memory;
+
 public class Parameter {
 	public static final double GROUBI_MIPGAP = 0.001; //%0.1
 	public static final int DELTA = 10000000;// a large value for ampl
@@ -9,7 +13,7 @@ public class Parameter {
 	public static final int SERVER_NUM = 20;
 	public static final int CPU_PER_SERVER = 32;// CPU cores
 	public static final int MEMORY_PER_SERVER = 128;
-	public static final int STORAGE_PER_SERVER = 1024;
+	public static final int DISK_PER_SERVER = 1024;
 	// public static final double[] RELI_MODULE = {0.99999,0.9999,0.9995,0.999};
 	// public static final double[] RELI_VM = {0.999999,0.99999,0.9999,0.999};
 
@@ -49,5 +53,4 @@ public class Parameter {
 		return //diskIntensive?sto.nextInt(513)+256: //256~768
 			sto.nextInt(512) + 1;// 1~256
 	}
-
 }

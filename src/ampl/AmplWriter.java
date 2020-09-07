@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import ddc.Computing;
 import ddc.DDC;
 import ddc.Memory;
-import ddc.Storage;
+import ddc.Disk;
 import general.Parameter;
 import request.VMGenerator;
 import request.VirtualMachine;
@@ -27,7 +27,7 @@ public class AmplWriter {
 		int vmNum = 50;
 		double[][] rel= {{0.7,0.8},{0.8,0.9}, {0.9,0.99}	
 		};
-		double lower = 0.999;
+		double lower = 0.995;
 		double upper=lower;
 		VMGenerator g = new VMGenerator();
 		ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum, lower,  upper);
@@ -85,7 +85,7 @@ public class AmplWriter {
 		for (VirtualMachine vm : vms) {
 			file.write(vm.getName() + ",CPU " + vm.getCpuDemand() + "\r\n");
 			file.write(vm.getName() + ",Memory " + vm.getMemDemand() + "\r\n");
-			file.write(vm.getName() + ",Disk " + vm.getStoDemand() + "\r\n");
+			file.write(vm.getName() + ",Disk " + vm.getDiskDemand() + "\r\n");
 		}
 		file.write(";\r\n");
 		file.flush();
@@ -119,7 +119,7 @@ public class AmplWriter {
 		BufferedWriter file = new BufferedWriter(new FileWriter(f));
 
 		// Resource types
-		file.write("set R := Computing, Memory, Storage;\r\n");
+		file.write("set R := Computing, Memory, Disk;\r\n");
 		file.flush();
 
 		// Module
@@ -133,8 +133,8 @@ public class AmplWriter {
 			file.write(m.getName() + " ");
 		file.write(" ;\r\n");
 
-		file.write("set M[Storage] :=");
-		for (Storage s : ddc.getStorages().values())
+		file.write("set M[Disk] :=");
+		for (Disk s : ddc.getDisks().values())
 			file.write(s.getName() + " ");
 		file.write(" ;\r\n");
 		file.flush();
@@ -153,8 +153,8 @@ public class AmplWriter {
 			file.write("Computing," + m.getName() + " " + m.getCapacity() + "\r\n");
 		for (Memory m : ddc.getMemorys().values())
 			file.write("Memory," + m.getName() + " " + m.getCapacity() + "\r\n");
-		for (Storage m : ddc.getStorages().values())
-			file.write("Storage," + m.getName() + " " + m.getCapacity() + "\r\n");
+		for (Disk m : ddc.getDisks().values())
+			file.write("Disk," + m.getName() + " " + m.getCapacity() + "\r\n");
 		file.write(";\r\n");
 		file.flush();
 
@@ -164,8 +164,8 @@ public class AmplWriter {
 			file.write("Computing," + m.getName() + " " + m.getReliability() + "\r\n");
 		for (Memory m : ddc.getMemorys().values())
 			file.write("Memory," + m.getName() + " " + m.getReliability() + "\r\n");
-		for (Storage m : ddc.getStorages().values())
-			file.write("Storage," + m.getName() + " " + m.getReliability() + "\r\n");
+		for (Disk m : ddc.getDisks().values())
+			file.write("Disk," + m.getName() + " " + m.getReliability() + "\r\n");
 		file.write(";\r\n");
 		file.flush();
 
@@ -174,7 +174,7 @@ public class AmplWriter {
 		for (VirtualMachine vm : vms) {
 			file.write(vm.getName() + ",Computing " + vm.getCpuDemand() + "\r\n");
 			file.write(vm.getName() + ",Memory " + vm.getMemDemand() + "\r\n");
-			file.write(vm.getName() + ",Storage " + vm.getStoDemand() + "\r\n");
+			file.write(vm.getName() + ",Disk " + vm.getDiskDemand() + "\r\n");
 		}
 		file.write(";\r\n");
 		file.flush();

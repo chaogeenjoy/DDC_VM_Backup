@@ -5,14 +5,14 @@ import general.CommonObject;
 public class VirtualMachine extends CommonObject {
 	private int cpuDemand;
 	private int memDemand;
-	private int stoDemand;
+	private int diskDemand;
 	private double reliabilityReq;
-	public VirtualMachine(String name, int index, String comments, int cpuDemand, int memDemand, int stoDemand,
+	public VirtualMachine(String name, int index, String comments, int cpuDemand, int memDemand, int diskDemand,
 			double reliabilityReq) {
 		super(name, index, comments);
 		this.cpuDemand = cpuDemand;
 		this.memDemand = memDemand;
-		this.stoDemand = stoDemand;
+		this.diskDemand = diskDemand;
 		this.reliabilityReq = reliabilityReq;
 	}
 	public int getCpuDemand() {
@@ -27,11 +27,11 @@ public class VirtualMachine extends CommonObject {
 	public void setMemDemand(int memDemand) {
 		this.memDemand = memDemand;
 	}
-	public int getStoDemand() {
-		return stoDemand;
+	public int getDiskDemand() {
+		return diskDemand;
 	}
-	public void setStoDemand(int stoDemand) {
-		this.stoDemand = stoDemand;
+	public void setDiskDemand(int diskDemand) {
+		this.diskDemand = diskDemand;
 	}
 	public double getReliabilityReq() {
 		return reliabilityReq;

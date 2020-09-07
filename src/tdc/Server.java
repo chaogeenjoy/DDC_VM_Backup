@@ -2,13 +2,13 @@ package tdc;
 
 import ddc.Computing;
 import ddc.Memory;
-import ddc.Storage;
+import ddc.Disk;
 import general.CommonObject;
 
 public class Server extends CommonObject {
 	private Computing cpu;
 	private Memory memory;
-	private Storage disk;
+	private Disk disk;
 	private double reliaiblity;
 	
 	public Server(String name, int index, String comments) {
@@ -31,11 +31,11 @@ public class Server extends CommonObject {
 	public void setMemory(Memory memory) {
 		this.memory = memory;
 	}
-	public Storage getDisk() {
+	public Disk getDisk() {
 		return disk;
 	}
 
-	public void setDisk(Storage disk) {
+	public void setDisk(Disk disk) {
 		this.disk = disk;
 	}
 
