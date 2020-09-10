@@ -24,18 +24,18 @@ public class AmplWriter {
 		TDC tdc = new TDC();
 		tdc.convertingDDCToTDC(ddc);
 
-		int vmNum = 50;
-		double[][] rel= {{0.7,0.8},{0.8,0.9}, {0.9,0.99}	
-		};
-		double lower = 0.995;
-		double upper=lower;
-		VMGenerator g = new VMGenerator();
-		ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum, lower,  upper);
+		int[] nums = { 10,20,30,40,50 };
+		for (int vmNum : nums) {
+			double lower = 0.9;
+			double upper = 0.9999;
+			VMGenerator g = new VMGenerator();
+			ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum, lower, upper);
 
-		String folderName = "D:\\softspace\\ampl\\";
-		String varName = "" + upper;
-		generateDataFile_DDC(ddc, folderName, varName, vms);
-		generateDataFile_TDC(tdc, ddc, folderName, varName, vms);
+			String folderName = "D:\\softspace\\ampl\\";
+			String varName = "" + vmNum;
+			generateDataFile_DDC(ddc, folderName, varName, vms);
+			generateDataFile_TDC(tdc, ddc, folderName, varName, vms);
+		}
 		System.out.println("Finish");
 	}
 
@@ -67,7 +67,7 @@ public class AmplWriter {
 		file.write("param C :=\r\n");
 		for (Server s : tdc.getServers().values()) {
 			file.write(s.getName() + ",CPU " + s.getCpu().getCapacity() + "\r\n");
-			file.write(s.getName() + ",Memory "+s.getMemory().getCapacity() + "\r\n");
+			file.write(s.getName() + ",Memory " + s.getMemory().getCapacity() + "\r\n");
 			file.write(s.getName() + ",Disk " + s.getDisk().getCapacity() + "\r\n");
 		}
 		file.write(";\r\n");
@@ -76,7 +76,7 @@ public class AmplWriter {
 		// Reliability
 		file.write("param Reli :=\r\n");
 		for (Server s : tdc.getServers().values())
-			file.write(s.getName() + " "+s.getReliaiblity()+"\r\n");
+			file.write(s.getName() + " " + s.getReliaiblity() + "\r\n");
 		file.write(";\r\n");
 		file.flush();
 
@@ -109,7 +109,8 @@ public class AmplWriter {
 		bw1.write("display sum{v in V} chi[v];\r\n");
 		bw1.write(
 				"#display {v in V} sum{s in S, t in S} phi[v,s,t] * (1-(1-prod{r in R} (sum{m in M[r]} Beta[s,r,m]*Reli[r,m]))*(1-prod{r in R} (sum{m in M[r]} Beta[t,r,m]*Reli[r,m])))"
-						+ "+ sum{s in S} vphi[v,s] * prod{r in R}(sum{m in M[r]} Beta[s,r,m]*Reli[r,m]) >> Reli_Tdc"+varName+".txt;\r\n");
+						+ "+ sum{s in S} vphi[v,s] * prod{r in R}(sum{m in M[r]} Beta[s,r,m]*Reli[r,m]) >> Reli_Tdc"
+						+ varName + ".txt;\r\n");
 		bw1.close();
 	}
 
@@ -198,7 +199,7 @@ public class AmplWriter {
 		bw1.write("display sum{v in V} chi[v];\r\n");
 		bw1.write("#display {v in V} "
 				+ "chi[v] * prod{r in R} (1- sum{m in M[r],n in M[r]} delta[v,r,m]*gamma[v,r,n]*(1-Reli[r,m])*(1-Reli[r,n])) "
-				+ "+prod{r in R} (sum{m in M[r]} delta[v,r,m]*(1-chi[v])*Reli[r,m])>>Reli_ddc"+varName+".txt;\r\n");
+				+ "+prod{r in R} (sum{m in M[r]} delta[v,r,m]*(1-chi[v])*Reli[r,m])>>Reli_ddc" + varName + ".txt;\r\n");
 		bw1.write(
 				"#display {v in V} exp(sum{r in R, m in M[r], n in M[r]} mu[v,r,m,n] * log(1-(1-Reli[r,m])*(1-Reli[r,n]))"
 						+ "+ sum{r in R, m in M[r]} xi[v,r,m] * log(Reli[r,m]));\r\n");
