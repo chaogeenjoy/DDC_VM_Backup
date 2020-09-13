@@ -24,10 +24,11 @@ public class AmplWriter {
 		TDC tdc = new TDC();
 		tdc.convertingDDCToTDC(ddc);
 
-		int[] nums = { 10,20,30,40,50 };
+		int[] nums = {70,80};
 		for (int vmNum : nums) {
-			double lower = 0.9;
-			double upper = 0.9999;
+			double lower = 0.95;
+			//double upper = lower;
+			double upper = 0.99;
 			VMGenerator g = new VMGenerator();
 			ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum, lower, upper);
 

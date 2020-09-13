@@ -13,7 +13,31 @@ import general.Equations;
 import request.VirtualMachine;
 
 public class DDC_Algorithm_Reliability_First {
+	private int accept = 0;
+	private int backup = 0;
 
+	/**
+	 * @return - number of accepted VMs
+	 */
+	public int getAccept() {
+		return accept;
+	}
+
+	public void setAccept(int accept) {
+		this.accept = accept;
+	}
+
+	/**
+	 * @return - number of accepted VMs that needs a backup
+	 */
+	public int getBackup() {
+		return backup;
+	}
+
+	public void setBackup(int backup) {
+		this.backup = backup;
+	}
+	
 	public int mapVMBatches(DDC ddc, ArrayList<VirtualMachine> vms) {
 		// sort VMs in descending order of their reliability requests
 
@@ -24,26 +48,23 @@ public class DDC_Algorithm_Reliability_First {
 		 * diff = o2.getReliabilityReq() - o1.getReliabilityReq(); return diff > 0 ? 1 :
 		 * (diff < 0 ? -1 : 0); } });
 		 */
-//		Collections.shuffle(vms);
+		
 
-		int accept = 0;// how many VMs are accepted
-		int backup = 0;// how many VMs are accepted with two copies
+
 		for (int i = 0; i < vms.size(); i++) {
 			VirtualMachine vm = vms.get(i);
 			// try to map it with single copy
 			if (this.mapSingleCopy(ddc, vm, false)) {
-				accept++;
+				this.setAccept(this.getAccept()+1);
 				continue;// single mapping succeed, no need to try two copies
 			}
 			if (this.mapTwoCopies(ddc, vm)) {
-				accept++;
-				backup++;
+				this.setAccept(this.getAccept()+1);
+				this.setBackup(this.getBackup()+1);
 				continue;
 			}
 		}
 
-		System.out.println("total accept VMs\t" + accept + "\r\ntotal accepted with two copies\t" + backup
-				+ "\r\ntotal requests num\t" + vms.size());
 		return accept;
 	}
 
