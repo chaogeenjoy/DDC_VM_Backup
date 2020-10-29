@@ -24,16 +24,22 @@ public class AmplWriter {
 		TDC tdc = new TDC();
 		tdc.convertingDDCToTDC(ddc);
 
-		int[] nums = {70,80};
+		int[] nums = {20,25,30,35,40,45,50};
 		for (int vmNum : nums) {
 			double lower = 0.95;
-			//double upper = lower;
 			double upper = 0.99;
+			String varName = "" + vmNum;
+
+//		double[] ths = {0.85 };
+//		int vmNum = 30;
+//		for (double th : ths) {
+//			double lower = th;
+//			double upper = th;
+//			String varName = "" + th;
+			
 			VMGenerator g = new VMGenerator();
 			ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum, lower, upper);
-
 			String folderName = "D:\\softspace\\ampl\\";
-			String varName = "" + vmNum;
 			generateDataFile_DDC(ddc, folderName, varName, vms);
 			generateDataFile_TDC(tdc, ddc, folderName, varName, vms);
 		}

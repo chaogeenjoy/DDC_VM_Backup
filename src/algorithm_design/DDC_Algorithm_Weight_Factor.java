@@ -12,13 +12,19 @@ import ddc.Module;
 import general.Equations;
 import request.VirtualMachine;
 
-public class DDC_Algorithm_Utilization_First {
+public class DDC_Algorithm_Weight_Factor {
+	private double alpha = 0.1;
 	private int accept = 0;
 	private int backup = 0;
 
-	/**
-	 * @return - number of accepted VMs
-	 */
+	public double getAlpha() {
+		return alpha;
+	}
+
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
+	}
+
 	public int getAccept() {
 		return accept;
 	}
@@ -27,9 +33,6 @@ public class DDC_Algorithm_Utilization_First {
 		this.accept = accept;
 	}
 
-	/**
-	 * @return - number of accepted VMs that needs a backup
-	 */
 	public int getBackup() {
 		return backup;
 	}
@@ -48,19 +51,18 @@ public class DDC_Algorithm_Utilization_First {
 		 * diff = o2.getReliabilityReq() - o1.getReliabilityReq(); return diff > 0 ? 1 :
 		 * (diff < 0 ? -1 : 0); } });
 		 */
-//		Collections.shuffle(vms);
 
 		for (int i = 0; i < vms.size(); i++) {
 			VirtualMachine vm = vms.get(i);
 			// try to map it with single copy
-			int res = this.vmMapping(ddc, vm);
+			int res = this.vmMapping(ddc, vm, this.getAlpha());
 			if (res > 0)
 				this.setAccept(this.getAccept() + 1);
 			if (res == 2)
 				this.setBackup(this.getBackup() + 1);
 
 		}
-		return accept;
+		return this.getAccept();
 	}
 
 	/**
@@ -68,7 +70,7 @@ public class DDC_Algorithm_Utilization_First {
 	 * @param vm
 	 * @return -1: failure; 1 succeed with one copy; 2 succeed with two copies
 	 */
-	public int vmMapping(DDC ddc, VirtualMachine vm) {
+	public int vmMapping(DDC ddc, VirtualMachine vm, double ALPHA) {
 		ArrayList<Computing> cpus = new ArrayList<>();
 		ArrayList<Memory> memories = new ArrayList<>();
 		ArrayList<Disk> disks = new ArrayList<>();
@@ -97,24 +99,33 @@ public class DDC_Algorithm_Utilization_First {
 				return -1;
 		}
 
-		{// sort each module list in ascending order of their remaining resources
+		{// sort each module list in ascending order of R_mr + alpha * F_mr
 			// equivalently, descending order of loads
 			Collections.sort(cpus, new Comparator<Computing>() {
 				@Override
 				public int compare(Computing o1, Computing o2) {
-					return o2.getLoad() - o1.getLoad();
+					double w1 = Equations.sortingWeight(o1, vm, ALPHA);
+					double w2 = Equations.sortingWeight(o2, vm, ALPHA);
+					double diff = w1 - w2;
+					return diff > 0 ? 1 : (diff < 0 ? -1 : 0);
 				}
 			});
 			Collections.sort(memories, new Comparator<Memory>() {
 				@Override
 				public int compare(Memory o1, Memory o2) {
-					return o2.getLoad() - o1.getLoad();
+					double w1 = Equations.sortingWeight(o1, vm, ALPHA);
+					double w2 = Equations.sortingWeight(o2, vm, ALPHA);
+					double diff = w1 - w2;
+					return diff > 0 ? 1 : (diff < 0 ? -1 : 0);
 				}
 			});
 			Collections.sort(disks, new Comparator<Disk>() {
 				@Override
 				public int compare(Disk o1, Disk o2) {
-					return o2.getLoad() - o1.getLoad();
+					double w1 = Equations.sortingWeight(o1, vm, ALPHA);
+					double w2 = Equations.sortingWeight(o2, vm, ALPHA);
+					double diff = w1 - w2;
+					return diff > 0 ? 1 : (diff < 0 ? -1 : 0);
 				}
 			});
 		}
@@ -145,13 +156,13 @@ public class DDC_Algorithm_Utilization_First {
 				Computing c1 = cpus.get(i1);
 				Computing c2 = cpus.get(i2);
 				Memory m1 = memories.get(j1);
-				Memory m2 = memories.get(j1);
+				Memory m2 = memories.get(j2);
 				Disk d1 = disks.get(k1);
-				Disk d2 = disks.get(k1);
+				Disk d2 = disks.get(k2);
 
 				// judge whether reliability is legal
 				double temp = Equations.reliCalcu_Backup(c1, c2, m1, m2, d1, d2);
-				if (temp > vm.getReliabilityReq()) {
+				if (temp >= vm.getReliabilityReq()) {
 					tm[0] = c1;
 					tm[1] = c2;
 					tm[2] = m1;
@@ -161,14 +172,13 @@ public class DDC_Algorithm_Utilization_First {
 					break;
 				}
 
-				
 				// find out who is the least reliable
-				Module[] tempm = {c1,c2,m1,m2,d1,d2};
-				double minReli = 0;
+				Module[] tempm = { c1, c2, m1, m2, d1, d2 };
+				double minReli = 100.0;
 				int minInd = 0;
 				for (int i = 0; i < 6; i++) {
 					double reliTemp = tempm[i].getReliability();
-					if (minReli < reliTemp) {
+					if (minReli > reliTemp) {
 						minReli = reliTemp;
 						minInd = i;
 					}
