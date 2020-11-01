@@ -10,7 +10,7 @@ public class Parameter {
 	public static final double GROUBI_MIPGAP = 0.0001; //%0.1
 	public static final int DELTA = 10000000;// a large value for ampl
 
-	public static final int SERVER_NUM = 10;
+	public static final int SERVER_NUM = 100;
 	public static final int CPU_PER_SERVER = 32;// CPU cores
 	public static final int MEMORY_PER_SERVER = 128;
 	public static final int DISK_PER_SERVER = 1024;
@@ -41,16 +41,16 @@ public class Parameter {
 
 	public static int cpuDemand(Random cpu,boolean cpuIntensive) {// the benchmark
 		return //cpuIntensive? cpu.nextInt(17)+8:// 8 ~ 24 cores
-				cpu.nextInt(16) + 1;// 1 ~ 8 cores
+				cpu.nextInt(16) + 1;// 1 ~ 16 cores
 	}
 
 	public static int memoryDemand(Random memory,boolean memoryIntensive) {
 		return //memoryIntensive? memory.nextInt(33) + 16: //16~48
-			memory.nextInt(64) + 1;// 1~16
+			memory.nextInt(64) + 1;// 1~64
 	}
 
 	public static int stoDemand(Random sto,boolean diskIntensive) {
 		return //diskIntensive?sto.nextInt(513)+256: //256~768
-			sto.nextInt(512) + 1;// 1~256
+			sto.nextInt(512) + 1;// 1~512
 	}
 }

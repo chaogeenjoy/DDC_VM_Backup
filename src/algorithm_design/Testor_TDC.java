@@ -13,20 +13,23 @@ public class Testor_TDC {
 	public static final int SHUFFLE = 1000000;
 
 	public static void main(String[] args) {
-		int[] nums = { 40 };
-		int[][] res = new int[nums.length][];
-		for (int i = 0; i < nums.length; i++) {
-			int vmNum = nums[i];
-			double lower = 0.95;
-			double upper = 0.99;
-			System.out.println("VM Number = " + vmNum + "\t=======");
 
-//		double[] ths = {0.85 };
-//		int vmNum = 30;
+//		int[] nums = { 25 };
+//		int[][] res = new int[nums.length][];
 //		for (int i = 0; i < nums.length; i++) {
-//			double th = nums[i];
-//			double lower = th;
-//			double upper = th;
+//			int vmNum = nums[i];
+//			double lower = 0.95;
+//			double upper = 0.99;
+//			System.out.println("VM Number = " + vmNum + "\t=======");
+
+		double[] nums = {0.8, 0.85, 0.9, 0.95, 0.96, 0.97, 0.98, 0.985, 0.99, 0.991, 0.992, 0.993, 0.994, 0.995 };
+		int[][] res = new int[nums.length][];
+		int vmNum = 30;
+		for (int i = 0; i < nums.length; i++) {
+			double th = nums[i];
+			double lower = th;
+			double upper = th;
+			System.out.println("VM Number = " + th + "\t=======");
 
 			res[i] = shuffleTrial(vmNum, lower, upper, SHUFFLE);
 		}
@@ -35,7 +38,6 @@ public class Testor_TDC {
 		for (int i = 0; i < nums.length; i++) {
 			System.out.println(res[i][0] + "\t" + res[i][1]);
 		}
-		System.out.println("\r\n\r\nTDC TESTOR");
 	}
 
 	public static int[] shuffleTrial(int vmNum, double lower, double upper, int shuffle) {

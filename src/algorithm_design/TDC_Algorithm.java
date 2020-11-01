@@ -37,8 +37,11 @@ public class TDC_Algorithm {
 			int res = this.vmMapping(tdc, vm);
 			if (res > 0)
 				this.setAccept(this.getAccept() + 1);
-			if (res == 2)
+			if (res == 2) {
 				this.setBackup(this.getBackup() + 1);
+//				System.out.println(vm.getPracticalReli() + "\r\n\t" + vm.getWorking().getReliaiblity() + "\r\n\t"
+//						+ vm.getBackup().getReliaiblity());
+			}
 
 		}
 		return this.getAccept();
@@ -93,13 +96,15 @@ public class TDC_Algorithm {
 		target.getMemory().getOccupiedVMs().add(vm);
 		target.getDisk().setLoad(target.getDisk().getLoad() + vm.getDiskDemand());
 		target.getDisk().getOccupiedVMs().add(vm);
+		vm.setPracticalReli(target.getReliaiblity());
+		vm.setWorking(target);
 
 		return true;
 	}
 
 	private boolean withBackupTrial(ArrayList<Server> servers, VirtualMachine vm) {
 		Server t1 = null, t2 = null;
-		int i = 0, j = 0;
+		int i = 0, j = 1;
 		while (i < servers.size() && j < servers.size()) {
 			Server s1 = servers.get(i);
 			Server s2 = servers.get(j);
@@ -109,23 +114,26 @@ public class TDC_Algorithm {
 			t1 = s1;
 			t2 = s2;
 			if (s1.getReliaiblity() >= s2.getReliaiblity())
-				i++;
+				i += (i + 1) == j ? 2 : 1;
 			else
-				j++;
+				j += (j + 1) == i ? 2 : 1;
 		}
-		
+
 		if (t1 == null || t2 == null)
 			return false;
-		
-		Server[] ss= {t1,t2};
-		for(Server s:ss) {
-			s.getCpu().setLoad(s.getCpu().getLoad()+vm.getCpuDemand());
+
+		Server[] ss = { t1, t2 };
+		for (Server s : ss) {
+			s.getCpu().setLoad(s.getCpu().getLoad() + vm.getCpuDemand());
 			s.getCpu().getOccupiedVMs().add(vm);
-			s.getMemory().setLoad(s.getMemory().getLoad()+vm.getMemDemand());
+			s.getMemory().setLoad(s.getMemory().getLoad() + vm.getMemDemand());
 			s.getMemory().getOccupiedVMs().add(vm);
 			s.getDisk().setLoad(s.getDisk().getLoad() + vm.getDiskDemand());
 			s.getDisk().getOccupiedVMs().add(vm);
+			vm.setWorking(t1);
+			vm.setBackup(t2);
 		}
+		vm.setPracticalReli(Equations.reli_twoServers(t1, t2));
 		return true;
 	}
 

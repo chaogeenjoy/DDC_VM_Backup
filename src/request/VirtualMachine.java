@@ -1,12 +1,16 @@
 package request;
 
 import general.CommonObject;
+import tdc.Server;
 
 public class VirtualMachine extends CommonObject {
 	private int cpuDemand;
 	private int memDemand;
 	private int diskDemand;
 	private double reliabilityReq;
+	private double practicalReli;
+	private Server working;
+	private Server backup;
 	public VirtualMachine(String name, int index, String comments, int cpuDemand, int memDemand, int diskDemand,
 			double reliabilityReq) {
 		super(name, index, comments);
@@ -38,6 +42,24 @@ public class VirtualMachine extends CommonObject {
 	}
 	public void setReliabilityReq(double reliabilityReq) {
 		this.reliabilityReq = reliabilityReq;
+	}
+	public double getPracticalReli() {
+		return practicalReli;
+	}
+	public void setPracticalReli(double practicalReli) {
+		this.practicalReli = practicalReli;
+	}
+	public Server getWorking() {
+		return working;
+	}
+	public void setWorking(Server working) {
+		this.working = working;
+	}
+	public Server getBackup() {
+		return backup;
+	}
+	public void setBackup(Server backup) {
+		this.backup = backup;
 	}
 
 }

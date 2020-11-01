@@ -9,24 +9,26 @@ import request.VMGenerator;
 import request.VirtualMachine;
 
 public class Testor_DDC {
-	public static final int SHUFFLE = Integer.MAX_VALUE-1;
+	public static final int SHUFFLE = 10000;
 
 	public static void main(String[] args) {
 
-		int[] nums = { 45 };
-		int[][] res = new int[nums.length][];
-		for (int i = 0; i < nums.length; i++) {
-			int vmNum = nums[i];
-			double lower = 0.95;
-			double upper = 0.99;
-			System.out.println("VM Number = " + vmNum + "\t=======");
-
-//		double[] ths = {0.85 };
-//		int vmNum = 30;
+//		int[] nums = { 25 };
+//		int[][] res = new int[nums.length][];
 //		for (int i = 0; i < nums.length; i++) {
-//			double th = nums[i];
-//			double lower = th;
-//			double upper = th;
+//			int vmNum = nums[i];
+//			double lower = 0.95;
+//			double upper = 0.99;
+//			System.out.println("VM Number = " + vmNum + "\t=======");
+
+		double[] nums = {0.85};
+		int[][] res = new int[nums.length][];
+		int vmNum = 300;
+		for (int i = 0; i < nums.length; i++) {
+			double th = nums[i];
+			double lower = th;
+			double upper = th;
+			System.out.println("VM Number = " + th + "\t=======");
 
 			res[i] = shuffleTrial(vmNum, lower, upper, SHUFFLE);
 		}
@@ -58,7 +60,7 @@ public class Testor_DDC {
 				res[1] = da.getBackup();
 				obj = temp;
 			}
-			if (shuffle > 10 && i % (shuffle / 1000) == 0)
+			if (shuffle > 10 && i % (shuffle / 10) == 0)
 				System.out.println(
 						"\t" + i + ":\t" + obj + "\t" + ((double) (System.currentTimeMillis() - begin) / 1000.0) + "s");
 		}
