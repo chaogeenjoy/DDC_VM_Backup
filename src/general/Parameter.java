@@ -10,7 +10,7 @@ public class Parameter {
 	public static final double GROUBI_MIPGAP = 0.0001; //%0.1
 	public static final int DELTA = 10000000;// a large value for ampl
 
-	public static final int SERVER_NUM = 100;
+	public static final int SERVER_NUM = 1000;
 	public static final int CPU_PER_SERVER = 32;// CPU cores
 	public static final int MEMORY_PER_SERVER = 128;
 	public static final int DISK_PER_SERVER = 1024;

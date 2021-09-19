@@ -161,7 +161,7 @@ public class DDC_Algorithm_Weight_Factor {
 				Disk d2 = disks.get(k2);
 
 				// judge whether reliability is legal
-				double temp = Equations.reliCalcu_Backup(c1, c2, m1, m2, d1, d2);
+				double temp = Equations.reliCalcu_Backup_NoFateSharing_DDC(c1, c2, m1, m2, d1, d2);
 				if (temp >= vm.getReliabilityReq()) {
 					tm[0] = c1;
 					tm[1] = c2;

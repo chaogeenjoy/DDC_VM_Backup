@@ -47,7 +47,7 @@ public class DDC_Algorithm_Reliability_First {
 		this.backup = backup;
 	}
 
-	public int mapVMBatches(DDC ddc, ArrayList<VirtualMachine> vms) {
+	public int mapVMBatches(DDC ddc, ArrayList<VirtualMachine> vms, boolean noFateSharing) {
 		// sort VMs in descending order of their reliability requests
 
 		/*
@@ -63,7 +63,7 @@ public class DDC_Algorithm_Reliability_First {
 		for (int i = 0; i < vms.size(); i++) {
 			VirtualMachine vm = vms.get(i);
 			// try to map it with single copy
-			int res = this.vmMapping(ddc, vm,this.getAlpha());
+			int res = this.vmMapping(ddc, vm, this.getAlpha(),noFateSharing);
 			if (res > 0)
 				this.setAccept(this.getAccept() + 1);
 			if (res == 2)
@@ -78,7 +78,7 @@ public class DDC_Algorithm_Reliability_First {
 	 * @param vm
 	 * @return -1: failure; 1 succeed with one copy; 2 succeed with two copies
 	 */
-	public int vmMapping(DDC ddc, VirtualMachine vm, double ALPHA) {
+	public int vmMapping(DDC ddc, VirtualMachine vm, double ALPHA,boolean noFateSharing) {
 		ArrayList<Computing> cpus = new ArrayList<>();
 		ArrayList<Memory> memories = new ArrayList<>();
 		ArrayList<Disk> disks = new ArrayList<>();
@@ -140,7 +140,7 @@ public class DDC_Algorithm_Reliability_First {
 
 		if (singleCopyTry(cpus, memories, disks, vm))
 			return 1;
-		if (twoCopiesTry(cpus, memories, disks, vm))
+		if (twoCopiesTry(cpus, memories, disks, vm, noFateSharing))
 			return 2;
 		return -1;
 	}
@@ -190,7 +190,7 @@ public class DDC_Algorithm_Reliability_First {
 	}
 
 	public boolean twoCopiesTry(ArrayList<Computing> cpus, ArrayList<Memory> memories, ArrayList<Disk> disks,
-			VirtualMachine vm) {
+			VirtualMachine vm, boolean NoFateSharing) {
 
 		if (cpus.size() < 2 || memories.size() < 2 || disks.size() < 2)
 			return false;
@@ -213,7 +213,8 @@ public class DDC_Algorithm_Reliability_First {
 				Disk d2 = disks.get(k2);
 
 				// judge whether reliability is legal
-				double temp = Equations.reliCalcu_Backup(c1, c2, m1, m2, d1, d2);
+				double temp = NoFateSharing ? Equations.reliCalcu_Backup_NoFateSharing_DDC(c1, c2, m1, m2, d1, d2)
+						: Equations.reliCalcu_Backup_CompleteFateSharing_DDC(c1, c2, m1, m2, d1, d2);
 				if (temp < vm.getReliabilityReq())
 					break;
 

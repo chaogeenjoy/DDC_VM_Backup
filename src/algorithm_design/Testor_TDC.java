@@ -14,22 +14,22 @@ public class Testor_TDC {
 
 	public static void main(String[] args) {
 
-//		int[] nums = { 25 };
-//		int[][] res = new int[nums.length][];
-//		for (int i = 0; i < nums.length; i++) {
-//			int vmNum = nums[i];
-//			double lower = 0.95;
-//			double upper = 0.99;
-//			System.out.println("VM Number = " + vmNum + "\t=======");
-
-		double[] nums = {0.8, 0.85, 0.9, 0.95, 0.96, 0.97, 0.98, 0.985, 0.99, 0.991, 0.992, 0.993, 0.994, 0.995 };
+		int[] nums = { 15,20,25,30,35,40 };
 		int[][] res = new int[nums.length][];
-		int vmNum = 30;
 		for (int i = 0; i < nums.length; i++) {
-			double th = nums[i];
-			double lower = th;
-			double upper = th;
-			System.out.println("VM Number = " + th + "\t=======");
+			int vmNum = nums[i];
+			double lower = 0.98;
+			double upper = 0.999;
+			System.out.println("VM Number = " + vmNum + "\t=======");
+
+//		double[] nums = {0.8, 0.85, 0.9, 0.95, 0.96, 0.97, 0.98, 0.985, 0.99, 0.991, 0.992, 0.993, 0.994, 0.995 };
+//		int[][] res = new int[nums.length][];
+//		int vmNum = 30;
+//		for (int i = 0; i < nums.length; i++) {
+//			double th = nums[i];
+//			double lower = th;
+//			double upper = th;
+//			System.out.println("VM Number = " + th + "\t=======");
 
 			res[i] = shuffleTrial(vmNum, lower, upper, SHUFFLE);
 		}
