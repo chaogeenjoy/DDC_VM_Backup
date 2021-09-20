@@ -2,10 +2,6 @@ package general;
 
 import java.util.Random;
 
-import ddc.Computing;
-import ddc.Disk;
-import ddc.Memory;
-
 public class Parameter {
 	public static final double GROUBI_MIPGAP = 0.0001; //%0.1
 	public static final int DELTA = 10000000;// a large value for ampl

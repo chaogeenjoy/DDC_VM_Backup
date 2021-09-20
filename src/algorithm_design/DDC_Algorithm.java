@@ -12,18 +12,9 @@ import ddc.Module;
 import general.Equations;
 import request.VirtualMachine;
 
-public class DDC_Algorithm_Reliability_First {
-	private double alpha = 0.1;
+public class DDC_Algorithm {
 	private int accept = 0;
 	private int backup = 0;
-
-	public double getAlpha() {
-		return alpha;
-	}
-
-	public void setAlpha(double alpha) {
-		this.alpha = alpha;
-	}
 
 	/**
 	 * @return - number of accepted VMs
@@ -47,23 +38,12 @@ public class DDC_Algorithm_Reliability_First {
 		this.backup = backup;
 	}
 
-	public int mapVMBatches(DDC ddc, ArrayList<VirtualMachine> vms, boolean noFateSharing) {
-		// sort VMs in descending order of their reliability requests
-
-		/*
-		 * Collections.sort(vms, new Comparator<VirtualMachine>() {
-		 * 
-		 * @Override public int compare(VirtualMachine o1, VirtualMachine o2) { double
-		 * diff = o2.getReliabilityReq() - o1.getReliabilityReq(); return diff > 0 ? 1 :
-		 * (diff < 0 ? -1 : 0); } });
-		 */
-
-//		Collections.shuffle(vms);
+	public int mapVMBatches(DDC ddc, ArrayList<VirtualMachine> vms, boolean noFateSharing) {		
 
 		for (int i = 0; i < vms.size(); i++) {
 			VirtualMachine vm = vms.get(i);
 			// try to map it with single copy
-			int res = this.vmMapping(ddc, vm, this.getAlpha(),noFateSharing);
+			int res = this.vmMapping(ddc, vm, noFateSharing);
 			if (res > 0)
 				this.setAccept(this.getAccept() + 1);
 			if (res == 2)
@@ -78,7 +58,7 @@ public class DDC_Algorithm_Reliability_First {
 	 * @param vm
 	 * @return -1: failure; 1 succeed with one copy; 2 succeed with two copies
 	 */
-	public int vmMapping(DDC ddc, VirtualMachine vm, double ALPHA,boolean noFateSharing) {
+	public int vmMapping(DDC ddc, VirtualMachine vm, boolean noFateSharing) {
 		ArrayList<Computing> cpus = new ArrayList<>();
 		ArrayList<Memory> memories = new ArrayList<>();
 		ArrayList<Disk> disks = new ArrayList<>();
@@ -107,32 +87,25 @@ public class DDC_Algorithm_Reliability_First {
 				return -1;
 		}
 
-		{// sort each module list in ascending order of R_mr + alpha * F_mr
-			// equivalently, descending order of loads
+		{// sort each module list in descending order of reliability
 			Collections.sort(cpus, new Comparator<Computing>() {
 				@Override
-				public int compare(Computing o1, Computing o2) {
-					double w1 = Equations.sortingWeight(o1, vm, ALPHA);
-					double w2 = Equations.sortingWeight(o2, vm, ALPHA);
-					double dif = w2 - w1;
+				public int compare(Computing o1, Computing o2) {				
+					double dif = o2.getReliability() - o1.getReliability();
 					return dif > 0 ? 1 : (dif == 0 ? 0 : -1);
 				}
 			});
 			Collections.sort(memories, new Comparator<Memory>() {
 				@Override
 				public int compare(Memory o1, Memory o2) {
-					double w1 = Equations.sortingWeight(o1, vm, ALPHA);
-					double w2 = Equations.sortingWeight(o2, vm, ALPHA);
-					double dif = w2 - w1;
+					double dif = o2.getReliability() - o1.getReliability();
 					return dif > 0 ? 1 : (dif == 0 ? 0 : -1);
 				}
 			});
 			Collections.sort(disks, new Comparator<Disk>() {
 				@Override
 				public int compare(Disk o1, Disk o2) {
-					double w1 = Equations.sortingWeight(o1, vm, ALPHA);
-					double w2 = Equations.sortingWeight(o2, vm, ALPHA);
-					double dif = w2 - w1;
+					double dif = o2.getReliability() - o1.getReliability();
 					return dif > 0 ? 1 : (dif == 0 ? 0 : -1);
 				}
 			});

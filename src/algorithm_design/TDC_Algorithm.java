@@ -39,9 +39,7 @@ public class TDC_Algorithm {
 				this.setAccept(this.getAccept() + 1);
 			if (res == 2) {
 				this.setBackup(this.getBackup() + 1);
-//				System.out.println(vm.getPracticalReli() + "\r\n\t" + vm.getWorking().getReliaiblity() + "\r\n\t"
-//						+ vm.getBackup().getReliaiblity());
-			}
+		}
 
 		}
 		return this.getAccept();

@@ -7,17 +7,17 @@ import java.util.Random;
 import ddc.DDC;
 import request.VMGenerator;
 import request.VirtualMachine;
+import tdc.TDC;
 
-public class DDCThread extends Thread {
+public class TDCThread extends Thread{
 	private int shuffleTime = 0;
-	private boolean nonFateSharing = false;
 	private int vmNum = 0;
 	private double lowerReq = 0;
 	private double upperReq = 0;
 	private int accetance = 0;
 	private int accptWithBackups = 0;
 	private Random rand_shuff = null;
-
+	
 	public int getShuffleTime() {
 		return shuffleTime;
 	}
@@ -25,15 +25,7 @@ public class DDCThread extends Thread {
 	public void setShuffleTime(int shuffleTime) {
 		this.shuffleTime = shuffleTime;
 	}
-
-	public boolean isNonFateSharing() {
-		return nonFateSharing;
-	}
-
-	public void setNonFateSharing(boolean nonFateSharing) {
-		this.nonFateSharing = nonFateSharing;
-	}
-
+	
 	public int getVmNum() {
 		return vmNum;
 	}
@@ -81,18 +73,17 @@ public class DDCThread extends Thread {
 	public void setRand_shuff(Random rand_shuff) {
 		this.rand_shuff = rand_shuff;
 	}
-
-	public DDCThread(int shuffleTime, boolean nonFateSharing, int vmNum, double lowerReq, double upperReq, Random shuffleRandom,
+	
+	public TDCThread(int shuffleTime,int vmNum, double lowerReq, double upperReq, Random shuffleRandom,
 			String threadName) {
 		super(threadName);
 		this.shuffleTime = shuffleTime;
-		this.nonFateSharing = nonFateSharing;
 		this.vmNum = vmNum;
 		this.lowerReq = lowerReq;
 		this.upperReq = upperReq;
 		this.rand_shuff = shuffleRandom;
 	}
-
+	
 	@Override
 	public void run() {
 		int maxAcceptance = 0;
@@ -102,13 +93,16 @@ public class DDCThread extends Thread {
 		for (int i = 1; i < this.getShuffleTime() + 1; i++) {
 			DDC ddc = new DDC();
 			ddc.createDDC();
+			TDC tdc = new TDC();
+			tdc.convertingDDCToTDC(ddc);
 
+			
 			VMGenerator g = new VMGenerator();
 			ArrayList<VirtualMachine> vms = g.generatingVMs(this.getVmNum(), this.getLowerReq(), this.getUpperReq());
-			DDC_Algorithm da = new DDC_Algorithm();
+			TDC_Algorithm da = new TDC_Algorithm();
 			Collections.shuffle(vms,this.getRand_shuff());
 
-			da.mapVMBatches(ddc, vms, this.isNonFateSharing());
+			da.mapVMBatches(tdc, vms);
 			double temp = da.getAccept() - 0.001 * da.getBackup();
 			if (temp > obj) {
 				maxAcceptance = da.getAccept();
@@ -127,6 +121,5 @@ public class DDCThread extends Thread {
 		
 		this.setAccetance(maxAcceptance);
 		this.setAccptWithBackups(maxNumofAccWithBackup);
-
 	}
 }
