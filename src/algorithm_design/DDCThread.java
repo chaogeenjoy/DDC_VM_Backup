@@ -17,6 +17,7 @@ public class DDCThread extends Thread {
 	private int accetance = 0;
 	private int accptWithBackups = 0;
 	private Random rand_shuff = null;
+	private boolean relibilityFirst = false;// if true, select reliability first algorithm, otherwise, choose first fit
 
 	public int getShuffleTime() {
 		return shuffleTime;
@@ -81,8 +82,16 @@ public class DDCThread extends Thread {
 	public void setRand_shuff(Random rand_shuff) {
 		this.rand_shuff = rand_shuff;
 	}
+	
+	public boolean isRelibilityFirst() {
+		return relibilityFirst;
+	}
 
-	public DDCThread(int shuffleTime, boolean nonFateSharing, int vmNum, double lowerReq, double upperReq, Random shuffleRandom,
+	public void setRelibilityFirst(boolean relibilityFirst) {
+		this.relibilityFirst = relibilityFirst;
+	}
+
+	public DDCThread(int shuffleTime, boolean nonFateSharing, int vmNum, double lowerReq, double upperReq, Random shuffleRandom,boolean relibilityFirst,
 			String threadName) {
 		super(threadName);
 		this.shuffleTime = shuffleTime;
@@ -91,6 +100,7 @@ public class DDCThread extends Thread {
 		this.lowerReq = lowerReq;
 		this.upperReq = upperReq;
 		this.rand_shuff = shuffleRandom;
+		this.relibilityFirst = relibilityFirst;
 	}
 
 	@Override
@@ -108,7 +118,10 @@ public class DDCThread extends Thread {
 			DDC_Algorithm da = new DDC_Algorithm();
 			Collections.shuffle(vms,this.getRand_shuff());
 
-			da.mapVMBatches(ddc, vms, this.isNonFateSharing());
+			if(this.isRelibilityFirst())
+				da.mapVMBatches(ddc, vms, this.isNonFateSharing());
+			else
+				da.mapVMBatches_FirstFit(ddc, vms, this.isNonFateSharing());
 			double temp = da.getAccept() - 0.001 * da.getBackup();
 			if (temp > obj) {
 				maxAcceptance = da.getAccept();

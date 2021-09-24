@@ -29,7 +29,7 @@ public class TDC_Algorithm {
 		this.backup = backup;
 	}
 
-	public int mapVMBatches(TDC tdc, ArrayList<VirtualMachine> vms) {
+	public int mapVMBatches_ReliabilityFirst(TDC tdc, ArrayList<VirtualMachine> vms) {
 
 		for (int i = 0; i < vms.size(); i++) {
 			VirtualMachine vm = vms.get(i);
@@ -134,5 +134,41 @@ public class TDC_Algorithm {
 		vm.setPracticalReli(Equations.reli_twoServers(t1, t2));
 		return true;
 	}
+	
+	public int mapVMBatches_FirstFit(TDC tdc, ArrayList<VirtualMachine> vms) {
 
+		for (int i = 0; i < vms.size(); i++) {
+			VirtualMachine vm = vms.get(i);
+			// try to map it with single copy
+			int res = this.vmMapping_FirstFit(tdc, vm);
+			if (res > 0)
+				this.setAccept(this.getAccept() + 1);
+			if (res == 2) {
+				this.setBackup(this.getBackup() + 1);
+		}
+
+		}
+		return this.getAccept();
+	}
+	
+	private int vmMapping_FirstFit(TDC tdc, VirtualMachine vm) {
+		ArrayList<Server> servers = new ArrayList<>();
+
+		// exclude servers that remains insufficient resources
+		for (Server s : tdc.getServers().values()) {
+			if (s.getCpu().getLoad() + vm.getCpuDemand() > s.getCpu().getCapacity()
+					|| s.getMemory().getLoad() + vm.getMemDemand() > s.getMemory().getCapacity()
+					|| s.getDisk().getLoad() + vm.getDiskDemand() > s.getDisk().getCapacity())
+				continue;
+			servers.add(s);
+		}
+
+		if (servers.isEmpty())
+			return -1;
+		if (noBackupTrial(servers, vm))
+			return 1;
+		if (withBackupTrial(servers, vm))
+			return 2;
+		return -1;
+	}
 }

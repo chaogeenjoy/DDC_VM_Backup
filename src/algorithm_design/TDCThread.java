@@ -9,7 +9,7 @@ import request.VMGenerator;
 import request.VirtualMachine;
 import tdc.TDC;
 
-public class TDCThread extends Thread{
+public class TDCThread extends Thread {
 	private int shuffleTime = 0;
 	private int vmNum = 0;
 	private double lowerReq = 0;
@@ -17,7 +17,8 @@ public class TDCThread extends Thread{
 	private int accetance = 0;
 	private int accptWithBackups = 0;
 	private Random rand_shuff = null;
-	
+	private boolean relibilityFirst = false;// if true, select reliability first algorithm, otherwise, choose first fit
+
 	public int getShuffleTime() {
 		return shuffleTime;
 	}
@@ -25,7 +26,7 @@ public class TDCThread extends Thread{
 	public void setShuffleTime(int shuffleTime) {
 		this.shuffleTime = shuffleTime;
 	}
-	
+
 	public int getVmNum() {
 		return vmNum;
 	}
@@ -65,7 +66,7 @@ public class TDCThread extends Thread{
 	public void setAccptWithBackups(int accptWithBackups) {
 		this.accptWithBackups = accptWithBackups;
 	}
-	
+
 	public Random getRand_shuff() {
 		return rand_shuff;
 	}
@@ -73,8 +74,16 @@ public class TDCThread extends Thread{
 	public void setRand_shuff(Random rand_shuff) {
 		this.rand_shuff = rand_shuff;
 	}
-	
-	public TDCThread(int shuffleTime,int vmNum, double lowerReq, double upperReq, Random shuffleRandom,
+
+	public boolean isRelibilityFirst() {
+		return relibilityFirst;
+	}
+
+	public void setRelibilityFirst(boolean relibilityFirst) {
+		this.relibilityFirst = relibilityFirst;
+	}
+
+	public TDCThread(int shuffleTime, int vmNum, double lowerReq, double upperReq, Random shuffleRandom, boolean reliabilityFirst,
 			String threadName) {
 		super(threadName);
 		this.shuffleTime = shuffleTime;
@@ -82,8 +91,9 @@ public class TDCThread extends Thread{
 		this.lowerReq = lowerReq;
 		this.upperReq = upperReq;
 		this.rand_shuff = shuffleRandom;
+		this.relibilityFirst=reliabilityFirst;
 	}
-	
+
 	@Override
 	public void run() {
 		int maxAcceptance = 0;
@@ -96,13 +106,15 @@ public class TDCThread extends Thread{
 			TDC tdc = new TDC();
 			tdc.convertingDDCToTDC(ddc);
 
-			
 			VMGenerator g = new VMGenerator();
 			ArrayList<VirtualMachine> vms = g.generatingVMs(this.getVmNum(), this.getLowerReq(), this.getUpperReq());
 			TDC_Algorithm da = new TDC_Algorithm();
-			Collections.shuffle(vms,this.getRand_shuff());
+			Collections.shuffle(vms, this.getRand_shuff());
 
-			da.mapVMBatches(tdc, vms);
+			if(this.isRelibilityFirst())
+				da.mapVMBatches_ReliabilityFirst(tdc, vms);
+			else
+				da.mapVMBatches_FirstFit(tdc, vms);
 			double temp = da.getAccept() - 0.001 * da.getBackup();
 			if (temp > obj) {
 				maxAcceptance = da.getAccept();
@@ -118,7 +130,7 @@ public class TDCThread extends Thread{
 				+ ((double) (System.currentTimeMillis() - begin) / 1000.0) + "s\ntotal acceptance\t\t" + maxAcceptance
 				+ "\r\ntotal accepted with backups\t" + maxNumofAccWithBackup
 				+ "\n_________________________________\n");
-		
+
 		this.setAccetance(maxAcceptance);
 		this.setAccptWithBackups(maxNumofAccWithBackup);
 	}

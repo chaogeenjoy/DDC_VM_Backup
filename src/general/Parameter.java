@@ -10,9 +10,6 @@ public class Parameter {
 	public static final int CPU_PER_SERVER = 32;// CPU cores
 	public static final int MEMORY_PER_SERVER = 128;
 	public static final int DISK_PER_SERVER = 1024;
-	// public static final double[] RELI_MODULE = {0.99999,0.9999,0.9995,0.999};
-	// public static final double[] RELI_VM = {0.999999,0.99999,0.9999,0.999};
-
 	/**
 	 * @param r
 	 * @return 0.9 ~ 0.999

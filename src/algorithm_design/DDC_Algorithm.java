@@ -243,4 +243,65 @@ public class DDC_Algorithm {
 		}
 		return true;
 	}
+	
+	public int mapVMBatches_FirstFit(DDC ddc, ArrayList<VirtualMachine> vms, boolean noFateSharing) {		
+
+		for (int i = 0; i < vms.size(); i++) {
+			VirtualMachine vm = vms.get(i);
+			// try to map it with single copy
+			int res = this.vmMapping_FirstFit(ddc, vm, noFateSharing);
+			if (res > 0)
+				this.setAccept(this.getAccept() + 1);
+			if (res == 2)
+				this.setBackup(this.getBackup() + 1);
+
+		}
+		return this.getAccept();
+	}
+	
+	/**
+	 * @param ddc
+	 * @param vm
+	 * @return -1: failure; 1 succeed with one copy; 2 succeed with two copies
+	 */
+	public int vmMapping_FirstFit(DDC ddc, VirtualMachine vm, boolean noFateSharing) {
+		ArrayList<Computing> cpus = new ArrayList<>();
+		ArrayList<Memory> memories = new ArrayList<>();
+		ArrayList<Disk> disks = new ArrayList<>();
+
+		{// exclude modules that remains insufficient resources
+			for (Computing c : ddc.getCPUs().values()) {
+				if (c.getLoad() + vm.getCpuDemand() > c.getCapacity())
+					continue;
+				cpus.add(c);
+			}
+			if (cpus.isEmpty())
+				return -1;
+			for (Memory m : ddc.getMemorys().values()) {
+				if (m.getLoad() + vm.getMemDemand() > m.getCapacity())
+					continue;
+				memories.add(m);
+			}
+			if (memories.isEmpty())
+				return -1;
+			for (Disk d : ddc.getDisks().values()) {
+				if (d.getLoad() + vm.getDiskDemand() > d.getCapacity())
+					continue;
+				disks.add(d);
+			}
+			if (disks.isEmpty())
+				return -1;
+		}
+
+		{// No- sort each module list in descending order of reliability
+			
+		}
+
+		if (singleCopyTry(cpus, memories, disks, vm))
+			return 1;
+		if (twoCopiesTry(cpus, memories, disks, vm, noFateSharing))
+			return 2;
+		return -1;
+	}
+
 }

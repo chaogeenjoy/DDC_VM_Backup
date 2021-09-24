@@ -4,27 +4,29 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Testor_TDC {
+	public static boolean reliabilityFirst = false;
 	public static void main(String[] args) throws InterruptedException {
 		ArrayList<TDCThread> threads = new ArrayList<TDCThread>();
 
-//		int[] nums = { 15,20,25,30,35,40 };
-//		int[][] res = new int[nums.length][];
-//		for (int i = 0; i < nums.length; i++) {
-//			int vmNum = nums[i];
-//			double lower = 0.98;
-//			double upper = 0.999;
-//			System.out.println("VM Number = " + vmNum + "\t=======");
-
-
-		double[] variables = { 0.85, 0.9, 0.95, 0.99, 0.995, 0.999 };		
-		int vmNum = 3000;
+		int[] variables = { 1500,2000,2500,3000,3500,4000 };
 		for (int i = 0; i < variables.length; i++) {
-			double th = variables[i];
-			double lower = th;
-			double upper = th;
-			System.out.println("var = " + th + "\t=======");
+			int vmNum = variables[i];
+			double lower = 0.98;
+			double upper = 0.999;
+			System.out.println("VM Number = " + vmNum + "\t=======");
+			TDCThread thread = new TDCThread(Testor_DDC.SHUFFLE, vmNum, lower, upper, new Random(i), reliabilityFirst, "#of requests = "+vmNum);
 
-			TDCThread thread = new TDCThread(Testor_DDC.SHUFFLE, vmNum, lower, upper, new Random(i), "ReliaReq"+th);
+			
+
+//		double[] variables = { 0.8 };		
+//		int vmNum = 3000;
+//		for (int i = 0; i < variables.length; i++) {
+//			double th = variables[i];
+//			double lower = th;
+//			double upper = th;
+//			System.out.println("var = " + th + "\t=======");
+//			TDCThread thread = new TDCThread(Testor_DDC.SHUFFLE, vmNum, lower, upper, new Random(i), "ReliaReq"+th);
+			
 			threads.add(thread);
 			thread.start();			
 		}
