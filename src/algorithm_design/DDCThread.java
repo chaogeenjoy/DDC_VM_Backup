@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.Random;
 
 import ddc.DDC;
-import request.VMGenerator;
-import request.VirtualMachine;
+import request.RequestGenerator;
+import request.Request;
 
 public class DDCThread extends Thread {
 	private int shuffleTime = 0;
@@ -113,10 +113,12 @@ public class DDCThread extends Thread {
 			DDC ddc = new DDC();
 			ddc.createDDC();
 
-			VMGenerator g = new VMGenerator();
-			ArrayList<VirtualMachine> vms = g.generatingVMs(this.getVmNum(), this.getLowerReq(), this.getUpperReq());
+			RequestGenerator g = new RequestGenerator();
+			ArrayList<Request> vms = g.generatingVMs(this.getVmNum(), this.getLowerReq(), this.getUpperReq());
 			DDC_Algorithm da = new DDC_Algorithm();
-			Collections.shuffle(vms,this.getRand_shuff());
+			
+			if(this.isRelibilityFirst())
+				Collections.shuffle(vms,this.getRand_shuff());//only applicable to the non-first fit scenario
 
 			if(this.isRelibilityFirst())
 				da.mapVMBatches(ddc, vms, this.isNonFateSharing());
@@ -131,6 +133,8 @@ public class DDCThread extends Thread {
 			if (this.getShuffleTime() > 10 && i % (this.getShuffleTime() / 10) == 0)
 				System.out.println("\t" + currentThread().getName() + ":\t" + i + ":\t" + obj + "\t"
 						+ ((double) (System.currentTimeMillis() - begin) / 1000.0) + "s");
+			if(!this.isRelibilityFirst())
+				break;//for a first fit scenario, no shuffle process is applied
 		}
 
 		System.out.println("\n___________________________________\n" + currentThread().getName() + "\tRunning time:\t"

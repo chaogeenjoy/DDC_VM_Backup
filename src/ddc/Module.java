@@ -3,12 +3,12 @@ package ddc;
 import java.util.ArrayList;
 
 import general.CommonObject;
-import request.VirtualMachine;
+import request.Request;
 
 public class Module extends CommonObject {
 	private int capacity = 0;
 	private int load = 0;
-	private ArrayList<VirtualMachine> occupiedVMs = new ArrayList<>();
+	private ArrayList<Request> occupiedVMs = new ArrayList<>();
 	private double reliability = 0;
 
 	public Module(String name, int index, String comments, int capacity, double reliability) {
@@ -33,11 +33,11 @@ public class Module extends CommonObject {
 		this.load = load;
 	}
 
-	public ArrayList<VirtualMachine> getOccupiedVMs() {
+	public ArrayList<Request> getOccupiedVMs() {
 		return occupiedVMs;
 	}
 
-	public void setOccupiedVMs(ArrayList<VirtualMachine> occupiedVMs) {
+	public void setOccupiedVMs(ArrayList<Request> occupiedVMs) {
 		this.occupiedVMs = occupiedVMs;
 	}
 

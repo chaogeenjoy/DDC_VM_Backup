@@ -3,7 +3,7 @@ package request;
 import general.CommonObject;
 import tdc.Server;
 
-public class VirtualMachine extends CommonObject {
+public class Request extends CommonObject {
 	private int cpuDemand;
 	private int memDemand;
 	private int diskDemand;
@@ -11,7 +11,7 @@ public class VirtualMachine extends CommonObject {
 	private double practicalReli;
 	private Server working;
 	private Server backup;
-	public VirtualMachine(String name, int index, String comments, int cpuDemand, int memDemand, int diskDemand,
+	public Request(String name, int index, String comments, int cpuDemand, int memDemand, int diskDemand,
 			double reliabilityReq) {
 		super(name, index, comments);
 		this.cpuDemand = cpuDemand;

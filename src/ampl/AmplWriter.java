@@ -11,8 +11,8 @@ import ddc.DDC;
 import ddc.Memory;
 import ddc.Disk;
 import general.Parameter;
-import request.VMGenerator;
-import request.VirtualMachine;
+import request.RequestGenerator;
+import request.Request;
 import tdc.Server;
 import tdc.TDC;
 
@@ -37,8 +37,8 @@ public class AmplWriter {
 //			double upper = th;
 //			String varName = "" + th;
 
-			VMGenerator g = new VMGenerator();
-			ArrayList<VirtualMachine> vms = g.generatingVMs(vmNum, lower, upper);
+			RequestGenerator g = new RequestGenerator();
+			ArrayList<Request> vms = g.generatingVMs(vmNum, lower, upper);
 			String folderName = "C:\\AMPL\\";
 			generateDataFile_DDC(ddc, folderName, varName, vms);
 			generateDataFile_TDC(tdc, ddc, folderName, varName, vms);
@@ -47,7 +47,7 @@ public class AmplWriter {
 	}
 
 	public static void generateDataFile_TDC(TDC tdc, DDC ddc, String folderName, String varName,
-			ArrayList<VirtualMachine> vms) throws IOException {
+			ArrayList<Request> vms) throws IOException {
 		File f = new File(folderName, "tdc" + varName + ".dat");
 		BufferedWriter file = new BufferedWriter(new FileWriter(f));
 
@@ -64,7 +64,7 @@ public class AmplWriter {
 
 		// VMs
 		file.write("set V :=");
-		for (VirtualMachine v : vms) {
+		for (Request v : vms) {
 			file.write(v.getName() + " ");
 		}
 		file.write(" ;\r\n");
@@ -89,7 +89,7 @@ public class AmplWriter {
 
 		// resource demand
 		file.write("param D :=\r\n");
-		for (VirtualMachine vm : vms) {
+		for (Request vm : vms) {
 			file.write(vm.getName() + ",CPU " + vm.getCpuDemand() + "\r\n");
 			file.write(vm.getName() + ",Memory " + vm.getMemDemand() + "\r\n");
 			file.write(vm.getName() + ",Disk " + vm.getDiskDemand() + "\r\n");
@@ -99,7 +99,7 @@ public class AmplWriter {
 
 		// reliability threshold
 		file.write("param Theta :=\r\n");
-		for (VirtualMachine vm : vms) {
+		for (Request vm : vms) {
 			file.write(vm.getName() + " " + vm.getReliabilityReq() + "\r\n");
 		}
 		file.write(";\r\n");
@@ -121,7 +121,7 @@ public class AmplWriter {
 		bw1.close();
 	}
 
-	public static void generateDataFile_DDC(DDC ddc, String folderName, String varName, ArrayList<VirtualMachine> vms)
+	public static void generateDataFile_DDC(DDC ddc, String folderName, String varName, ArrayList<Request> vms)
 			throws IOException {
 		File f = new File(folderName, "ddc" + varName + ".dat");
 		BufferedWriter file = new BufferedWriter(new FileWriter(f));
@@ -149,7 +149,7 @@ public class AmplWriter {
 
 		// VMs
 		file.write("set V :=");
-		for (VirtualMachine v : vms) {
+		for (Request v : vms) {
 			file.write(v.getName() + " ");
 		}
 		file.write(" ;\r\n");
@@ -179,7 +179,7 @@ public class AmplWriter {
 
 		// resource demand
 		file.write("param D :=\r\n");
-		for (VirtualMachine vm : vms) {
+		for (Request vm : vms) {
 			file.write(vm.getName() + ",Computing " + vm.getCpuDemand() + "\r\n");
 			file.write(vm.getName() + ",Memory " + vm.getMemDemand() + "\r\n");
 			file.write(vm.getName() + ",Disk " + vm.getDiskDemand() + "\r\n");
@@ -189,7 +189,7 @@ public class AmplWriter {
 
 		// reliability threshold
 		file.write("param Theta :=\r\n");
-		for (VirtualMachine vm : vms) {
+		for (Request vm : vms) {
 			file.write(vm.getName() + " " + vm.getReliabilityReq() + "\r\n");
 		}
 		file.write(";\r\n");

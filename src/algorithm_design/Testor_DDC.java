@@ -28,7 +28,8 @@ public class Testor_DDC {
 //			double lower = th;
 //			double upper = th;
 //			System.out.println("var = " + th + "\t=======");
-//			DDCThread thread = new DDCThread(SHUFFLE, nonFateSharing, vmNum, lower, upper, new Random(i), "ReliaReq"+th);
+//			DDCThread thread = new DDCThread(SHUFFLE, nonFateSharing, vmNum, lower, upper, new Random(i), 
+//					relibilityFirst,"ReliaReq"+th);
 
 			// the new Random(i) is the random instance created for the shuffle, making sure
 			// that the shuffle process is the same

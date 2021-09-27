@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.Random;
 
 import ddc.DDC;
-import request.VMGenerator;
-import request.VirtualMachine;
+import request.RequestGenerator;
+import request.Request;
 import tdc.TDC;
 
 public class TDCThread extends Thread {
@@ -106,8 +106,8 @@ public class TDCThread extends Thread {
 			TDC tdc = new TDC();
 			tdc.convertingDDCToTDC(ddc);
 
-			VMGenerator g = new VMGenerator();
-			ArrayList<VirtualMachine> vms = g.generatingVMs(this.getVmNum(), this.getLowerReq(), this.getUpperReq());
+			RequestGenerator g = new RequestGenerator();
+			ArrayList<Request> vms = g.generatingVMs(this.getVmNum(), this.getLowerReq(), this.getUpperReq());
 			TDC_Algorithm da = new TDC_Algorithm();
 			Collections.shuffle(vms, this.getRand_shuff());
 

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import general.Equations;
-import request.VirtualMachine;
+import request.Request;
 import tdc.Server;
 import tdc.TDC;
 
@@ -29,10 +29,10 @@ public class TDC_Algorithm {
 		this.backup = backup;
 	}
 
-	public int mapVMBatches_ReliabilityFirst(TDC tdc, ArrayList<VirtualMachine> vms) {
+	public int mapVMBatches_ReliabilityFirst(TDC tdc, ArrayList<Request> vms) {
 
 		for (int i = 0; i < vms.size(); i++) {
-			VirtualMachine vm = vms.get(i);
+			Request vm = vms.get(i);
 			// try to map it with single copy
 			int res = this.vmMapping(tdc, vm);
 			if (res > 0)
@@ -45,7 +45,7 @@ public class TDC_Algorithm {
 		return this.getAccept();
 	}
 
-	private int vmMapping(TDC tdc, VirtualMachine vm) {
+	private int vmMapping(TDC tdc, Request vm) {
 		ArrayList<Server> servers = new ArrayList<>();
 
 		// exclude servers that remains insufficient resources
@@ -75,7 +75,7 @@ public class TDC_Algorithm {
 		return -1;
 	}
 
-	private boolean noBackupTrial(ArrayList<Server> servers, VirtualMachine vm) {
+	private boolean noBackupTrial(ArrayList<Server> servers, Request vm) {
 		Server target = null;
 		int i = 0;
 		while (i < servers.size()) {
@@ -100,7 +100,7 @@ public class TDC_Algorithm {
 		return true;
 	}
 
-	private boolean withBackupTrial(ArrayList<Server> servers, VirtualMachine vm) {
+	private boolean withBackupTrial(ArrayList<Server> servers, Request vm) {
 		Server t1 = null, t2 = null;
 		int i = 0, j = 1;
 		while (i < servers.size() && j < servers.size()) {
@@ -135,10 +135,10 @@ public class TDC_Algorithm {
 		return true;
 	}
 	
-	public int mapVMBatches_FirstFit(TDC tdc, ArrayList<VirtualMachine> vms) {
+	public int mapVMBatches_FirstFit(TDC tdc, ArrayList<Request> vms) {
 
 		for (int i = 0; i < vms.size(); i++) {
-			VirtualMachine vm = vms.get(i);
+			Request vm = vms.get(i);
 			// try to map it with single copy
 			int res = this.vmMapping_FirstFit(tdc, vm);
 			if (res > 0)
@@ -151,7 +151,7 @@ public class TDC_Algorithm {
 		return this.getAccept();
 	}
 	
-	private int vmMapping_FirstFit(TDC tdc, VirtualMachine vm) {
+	private int vmMapping_FirstFit(TDC tdc, Request vm) {
 		ArrayList<Server> servers = new ArrayList<>();
 
 		// exclude servers that remains insufficient resources
@@ -171,4 +171,5 @@ public class TDC_Algorithm {
 			return 2;
 		return -1;
 	}
+
 }
